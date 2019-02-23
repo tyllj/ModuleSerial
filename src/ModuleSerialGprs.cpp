@@ -42,6 +42,16 @@ void ModuleSerialGprs::openHttpConnection()
     core->writeCommand("AT+HTTPINIT", "OK", 2000);
 }
 
+void ModuleSerialGprs::enableHttps()
+{
+    core->writeCommand("AT+HTTPSSL=1", "OK", 2000);
+}
+
+void ModuleSerialGprs::disableHttps()
+{
+    core->writeCommand("AT+HTTPSSL=0", "OK", 2000);
+}
+
 void ModuleSerialGprs::closeHttpConnection()
 {
     core->writeCommand("AT+HTTPTERM", "OK", 2000);

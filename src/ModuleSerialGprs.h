@@ -28,6 +28,9 @@ public:
     void openHttpConnection();
     void closeHttpConnection();
 
+    void enableHttps();
+    void disableHttps();
+
     HttpResponse sendHttpRequest(int method, const char *url, unsigned long timeout);   
     void readHttpResponse(int count, char *output, int size);
 private:
