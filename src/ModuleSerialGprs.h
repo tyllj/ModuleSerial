@@ -31,7 +31,8 @@ public:
     void enableHttps();
     void disableHttps();
 
-    HttpResponse sendHttpRequest(int method, const char *url, unsigned long timeout);   
+    HttpResponse sendHttpRequest(int method, const char *url, unsigned long timeout);
+    HttpResponse sendHttpRequest(int method, const char *url, unsigned long timeout, const char *body);
     void readHttpResponse(int count, char *output, int size);
 private:
     ModuleSerialCore *core = nullptr;
