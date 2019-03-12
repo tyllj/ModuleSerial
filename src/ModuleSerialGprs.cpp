@@ -59,31 +59,11 @@ void ModuleSerialGprs::closeHttpConnection()
 
 ModuleSerialGprs::HttpResponse ModuleSerialGprs::sendHttpRequest(int method, const char *url, unsigned long timeout)
 {
-    // core->writeCommand("AT+HTTPSSL=1", "OK", 2000);
-    core->writeCommand("AT+HTTPPARA=\"CID\",1", "OK", 2000);
-
-    char command[200] = "";
-    sprintf(command, "AT+HTTPPARA=\"URL\",\"%s\"", url);
-
-    core->writeCommand(command, "OK", 2000);
-
-    char response[50] = "";
-    sprintf(command, "AT+HTTPACTION=%d", method);
-    core->writeCommand(command, response, 50, timeout);
-
-    ModuleSerialGprs::HttpResponse httpResponse;
-
-    if (strstr(response, "+HTTPACTION:") != NULL)
-    {
-        parseHttpResponse(&httpResponse, response);
-    }
-
-    return httpResponse;
+    return ModuleSerialGprs::sendHttpRequest(method, url, timeout, nullptr);
 }
 
 ModuleSerialGprs::HttpResponse ModuleSerialGprs::sendHttpRequest(int method, const char *url, unsigned long timeout, const char *body)
 {
-    // core->writeCommand("AT+HTTPSSL=1", "OK", 2000);
     core->writeCommand("AT+HTTPPARA=\"CID\",1", "OK", 2000);
 
     char command[200] = "";
@@ -91,11 +71,15 @@ ModuleSerialGprs::HttpResponse ModuleSerialGprs::sendHttpRequest(int method, con
 
     core->writeCommand(command, "OK", 2000);
 
-    int dataLenght = strlen(body);
-    int uploadTimeout = 5000;
-    sprintf(command, "AT+HTTPDATA=%i,%i", dataLenght, uploadTimeout);
-    core->writeCommand(command, "DOWNLOAD", 2000);
-    core->writeCommand(body, "OK", uploadTimeout + 2000);
+    if(body != nullptr)
+    {
+        int dataLenght = strlen(body);
+        int uploadTimeout = 5000;
+        core->writeCommand("AT+HTTPPARA=\"CONTENT\",\"application/json\"", "OK", 2000);
+        sprintf(command, "AT+HTTPDATA=%i,%i", dataLenght, uploadTimeout);
+        core->writeCommand(command, "DOWNLOAD", 2000);
+        core->writeCommand(body, "OK", uploadTimeout + 2000);
+    }
 
     char response[50] = "";
     sprintf(command, "AT+HTTPACTION=%d", method);
